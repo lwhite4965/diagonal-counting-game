@@ -7,13 +7,14 @@ interface SingleCellProps {
 	onClick: (r: number, c: number, cellType: string) => void;
 	row: number;
 	column: number;
+	selected: boolean;
 }
 
 // SingleCell instance - displays it's value in a square shape
 const SingleCell = (props: SingleCellProps) => {
 	return (
 		<div
-			className={`singleCell ${props.cellType}`}
+			className={`singleCell ${props.cellType} ${props.selected ? "selected" : ""}`}
 			onClick={() =>
 				props.onClick(props.row, props.column, props.cellType)
 			}>

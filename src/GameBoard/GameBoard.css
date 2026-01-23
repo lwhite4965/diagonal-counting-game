@@ -13,7 +13,7 @@
 		rgb(142, 202, 222) 80%,
 		rgb(255, 245, 139) 100%
 	);
-	padding: 100px;
+	padding: 60px;
 }
 
 /* Class for parent grid - flexbox column */
@@ -28,13 +28,24 @@
 	display: flex;
 	justify-content: center;
 	gap: 20px;
-	margin-bottom: 40px;
+	margin-bottom: 20px;
 }
 
 /* Generic class for helper text */
 .helperText {
-	margin: 4px;
+	margin: 0px;
 	color: black;
-	font-size: 24px;
+	font-size: 22px;
 	text-shadow: 1px 1px 1px rgb(251, 251, 150);
+}
+
+/* Specialized class for error text */
+.errorText {
+	margin: 0px;
+	color: rgb(56, 19, 19);
+	font-size: 22px;
+	text-shadow: 1px 1px 1px rgb(251, 251, 150);
+}
+.hidden {
+	visibility: hidden;
 }

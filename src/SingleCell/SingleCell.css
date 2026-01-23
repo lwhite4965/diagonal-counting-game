@@ -25,3 +25,9 @@
 .gold {
 	background-color: rgb(243, 191, 38);
 }
+
+/* Specialized class to emphasize the last selected cell */
+.selected {
+	z-index: 3;
+	border: rgb(110, 232, 35) 2px dotted;
+}

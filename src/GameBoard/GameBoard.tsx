@@ -3,14 +3,7 @@ import SingleCell from "../SingleCell/SingleCell";
 import ToolbarButton from "../ToolbarButton/ToolbarButton";
 import { getCellType, playSuccess, playFail } from "./helpers";
 import { useState } from "react";
-import testImage from "../assets/testImage.jpg";
-
-// Interface that defines mandatory (?) props for the GameBoard component
-// interface GameBoardProps {
-// 	foo: number;
-// }
-
-// Define methods for gameboard here
+import downloadImg from "../assets/downloadImg.svg";
 
 // GameBoard instance - renders collection of SingleCells
 const GameBoard = () => {
@@ -47,6 +40,36 @@ const GameBoard = () => {
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
 	// PLACE METHODS HERE
+
+	// Function to save jsonified game state to client computer
+	function saveGame(): void {
+		// get snapshot of state
+		const stateSnapshot = {
+			matrix,
+			nextToPlace,
+			lastCellPlaced,
+			secondLastCellPlaced,
+			activeLevel,
+			score,
+			errorMsg
+		};
+
+		// JSONify
+		const jsonToSave = JSON.stringify(stateSnapshot, null, 2);
+
+		// Get formatted date to name download
+		const now = new Date().toISOString().replace(/[:.]/g, "-");
+
+		// Format download metadata
+		const blob = new Blob([jsonToSave], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
+
+		// Invoke download event in browser via DOM
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = `snapshot-${now}.json`;
+		a.click();
+	}
 
 	// Define function for handling error, which, for now, is blank
 	function handleError(msg: string): void {
@@ -140,10 +163,10 @@ const GameBoard = () => {
 		<div className="verticalParent">
 			<div className="horizontalParent">
 				<ToolbarButton
-					label="foo"
-					onClick={() => console.log("foo")}
+					label="Save Game"
+					onClick={() => saveGame()}
 					bgColor="green"
-					icon={testImage}
+					icon={downloadImg}
 				/>
 				<ToolbarButton
 					label="bar"

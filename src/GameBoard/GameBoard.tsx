@@ -10,7 +10,7 @@ import uploadImg from "../assets/uploadImg.svg";
 const GameBoard = () => {
 	// PLACE INTERNAL STATE HERE
 	// Define Initial Matrix State
-	const [matrix, setMatrix] = useState<number[][]>([
+	const initialMatrix = [
 		[-1, -1, -1, -1, -1, -1, -1],
 		[-1, 0, 0, 0, 0, 0, -1],
 		[-1, 0, 0, 0, 0, 0, -1],
@@ -18,18 +18,14 @@ const GameBoard = () => {
 		[-1, 0, 0, 0, 0, 0, -1],
 		[-1, 0, 0, 0, 0, 0, -1],
 		[-1, -1, -1, -1, -1, -1, -1]
-	]);
+	];
+	const [matrix, setMatrix] = useState<number[][]>(initialMatrix);
 
 	// Define State for NextToPlace
 	const [nextToPlace, setNextToPlace] = useState<number>(1);
 
-	// Define Internal State for last cell placed
-	const [lastCellPlaced, setLastCellPlaced] = useState<number[]>([-1, -1]);
-
-	// This should help w undo functionality Jaden!!
-	const [secondLastCellPlaced, setSecondLastCellPlaced] = useState<number[]>([
-		-1, -1
-	]);
+	// Define Internal State for Cell Placement history
+	const [cellPlacementHistory, setCellPlacementHistory] = useState<number[][]>([]);
 
 	// Define Internal State for which "level" is active
 	const [activeLevel, setActiveLevel] = useState<1 | 2>(1);
@@ -48,8 +44,7 @@ const GameBoard = () => {
 		const stateSnapshot = {
 			matrix,
 			nextToPlace,
-			lastCellPlaced,
-			secondLastCellPlaced,
+			cellPlacementHistory,
 			activeLevel,
 			score,
 			errorMsg
@@ -99,8 +94,7 @@ const GameBoard = () => {
 
 					setMatrix(parsed.matrix);
 					setNextToPlace(parsed.nextToPlace);
-					setLastCellPlaced(parsed.lastCellPlaced);
-					setSecondLastCellPlaced(parsed.secondLastCellPlaced);
+					setCellPlacementHistory(parsed.cellPlacementHistory);
 					setActiveLevel(parsed.activeLevel);
 					setScore(parsed.score);
 					setErrorMsg(parsed.errorMsg);
@@ -140,16 +134,15 @@ const GameBoard = () => {
 				return prev;
 			});
 			setNextToPlace((prev) => prev + 1);
-			setSecondLastCellPlaced(lastCellPlaced);
-			setLastCellPlaced([r, c]);
+			setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
 			playSuccess();
 			return;
 		}
 
 		// Case where "2" through "25" is being placed
 		// Source coordinates of last placed cell
-		const lr = lastCellPlaced[0];
-		const lc = lastCellPlaced[1];
+		const lr = cellPlacementHistory[cellPlacementHistory.length - 1][0];
+		const lc = cellPlacementHistory[cellPlacementHistory.length - 1][1];
 
 		// Error on selecting non-adjacent cell
 		if (Math.abs(r - lr) > 1 || Math.abs(c - lc) > 1) {
@@ -180,8 +173,7 @@ const GameBoard = () => {
 		if (nextToPlace == 25) {
 			setNextToPlace(2);
 			setActiveLevel(2);
-			setSecondLastCellPlaced(lastCellPlaced);
-			setLastCellPlaced([r, c]);
+			setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
 			// Clear "-1" from lvl 2 cells
 			setMatrix((prevMatrix) =>
 				prevMatrix.map((row) => row.map((v) => (v === -1 ? 0 : v)))
@@ -191,8 +183,7 @@ const GameBoard = () => {
 		}
 
 		setNextToPlace((prev) => prev + 1);
-		setSecondLastCellPlaced(lastCellPlaced);
-		setLastCellPlaced([r, c]);
+		setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
 		setErrorMsg(null);
 		playSuccess();
 	}
@@ -201,6 +192,31 @@ const GameBoard = () => {
 	// not touching this - just for architecture
 	function processLvl2Move(r: number, c: number, cellType: string): void {
 		console.log(r, c, cellType, "Lvl 2 not yet implemented");
+	}
+
+	// Define function for undoing a cell placement. Deny undos when next to place is 1.
+	function undoCellPlacement() {
+		if (nextToPlace > 2) {
+			const lastCellPlacement = cellPlacementHistory.pop();
+			if (lastCellPlacement) {
+				matrix[lastCellPlacement[0]][lastCellPlacement[1]] = 0;
+				setMatrix(matrix);
+				setNextToPlace((prev) => prev - 1);
+			}
+		} else {
+			handleError("Cannot undo when the last placed number is 1.");
+		}
+	}
+
+	// Define function for clearing the board, keeping only the 1's placement.
+	function clearBoard() {
+		const firstCellPlacement = cellPlacementHistory[0];
+		setCellPlacementHistory([firstCellPlacement]);
+		matrix.length = 0;
+		matrix.push(...initialMatrix);
+		matrix[firstCellPlacement[0]][firstCellPlacement[1]] = 1;
+		setMatrix(matrix);
+		setNextToPlace(2);
 	}
 
 	// Return Grid of SingleCells, passing corresponding matrix value to each
@@ -218,6 +234,20 @@ const GameBoard = () => {
 					onClick={() => loadGame()}
 					bgColor="purple"
 					icon={uploadImg}
+				/>
+			</div>
+			<div className="horizontalParent">
+				<ToolbarButton
+					label="Undo"
+					onClick={undoCellPlacement}
+					bgColor="green"
+					icon={""}
+				/>
+				<ToolbarButton
+					label="Clear"
+					onClick={clearBoard}
+					bgColor="purple"
+					icon={""}
 				/>
 			</div>
 			<p className="helperText">Current Level: {activeLevel}</p>
@@ -239,8 +269,9 @@ const GameBoard = () => {
 										: processLvl2Move
 								}
 								selected={
-									rowCount == lastCellPlaced[0] &&
-									cellCount == lastCellPlaced[1]
+									cellPlacementHistory.length > 0 &&
+									rowCount == cellPlacementHistory[cellPlacementHistory.length - 1][0] &&
+									cellCount == cellPlacementHistory[cellPlacementHistory.length - 1][1]
 								}
 							/>
 						);
@@ -248,10 +279,10 @@ const GameBoard = () => {
 				)}
 			</div>
 			<p className="helperText">
-				{`Last Cell (debugging): ${lastCellPlaced}`}
+				{`Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length -1]}`}
 			</p>
 			<p className="helperText">
-				{`2nd Last Cell (debugging): ${secondLastCellPlaced}`}
+				{`2nd Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length -2]}`}
 			</p>
 			<p
 				className={`errorText ${errorMsg ? "" : "hidden"}`}>{`Error: ${errorMsg}`}</p>

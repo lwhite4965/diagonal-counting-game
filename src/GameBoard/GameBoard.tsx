@@ -25,7 +25,9 @@ const GameBoard = () => {
 	const [nextToPlace, setNextToPlace] = useState<number>(1);
 
 	// Define Internal State for Cell Placement history
-	const [cellPlacementHistory, setCellPlacementHistory] = useState<number[][]>([]);
+	const [cellPlacementHistory, setCellPlacementHistory] = useState<
+		number[][]
+	>([]);
 
 	// Define Internal State for which "level" is active
 	const [activeLevel, setActiveLevel] = useState<1 | 2>(1);
@@ -199,6 +201,8 @@ const GameBoard = () => {
 		if (nextToPlace > 2) {
 			const lastCellPlacement = cellPlacementHistory.pop();
 			if (lastCellPlacement) {
+				// Mutating state is OK since it is being referenced by setter right after
+				// eslint-disable-next-line
 				matrix[lastCellPlacement[0]][lastCellPlacement[1]] = 0;
 				setMatrix(matrix);
 				setNextToPlace((prev) => prev - 1);
@@ -212,8 +216,11 @@ const GameBoard = () => {
 	function clearBoard() {
 		const firstCellPlacement = cellPlacementHistory[0];
 		setCellPlacementHistory([firstCellPlacement]);
+		// Mutating state is OK since it is being referenced by setter right after
+		// eslint-disable-next-line
 		matrix.length = 0;
 		matrix.push(...initialMatrix);
+		// eslint-disable-next-line
 		matrix[firstCellPlacement[0]][firstCellPlacement[1]] = 1;
 		setMatrix(matrix);
 		setNextToPlace(2);
@@ -270,8 +277,14 @@ const GameBoard = () => {
 								}
 								selected={
 									cellPlacementHistory.length > 0 &&
-									rowCount == cellPlacementHistory[cellPlacementHistory.length - 1][0] &&
-									cellCount == cellPlacementHistory[cellPlacementHistory.length - 1][1]
+									rowCount ==
+										cellPlacementHistory[
+											cellPlacementHistory.length - 1
+										][0] &&
+									cellCount ==
+										cellPlacementHistory[
+											cellPlacementHistory.length - 1
+										][1]
 								}
 							/>
 						);
@@ -279,10 +292,10 @@ const GameBoard = () => {
 				)}
 			</div>
 			<p className="helperText">
-				{`Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length -1]}`}
+				{`Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length - 1]}`}
 			</p>
 			<p className="helperText">
-				{`2nd Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length -2]}`}
+				{`2nd Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length - 2]}`}
 			</p>
 			<p
 				className={`errorText ${errorMsg ? "" : "hidden"}`}>{`Error: ${errorMsg}`}</p>

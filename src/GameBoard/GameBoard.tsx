@@ -191,9 +191,74 @@ const GameBoard = () => {
 	}
 
 	// Define function for processing a move in lvl2 - accepts row column coordinates positionally
-	// not touching this - just for architecture
 	function processLvl2Move(r: number, c: number, cellType: string): void {
-		console.log(r, c, cellType, "Lvl 2 not yet implemented");
+		// error on trying to place in previous level
+		if (cellType == 'grey') {
+			handleError("Cannot place in level 1.");
+			return;
+		}
+
+		// error on trying to place in already filled cell
+		if (matrix[r][c] !== 0) {
+			handleError("Cannot place number in already filled cell.");
+			return;
+		}
+
+		// get the position in level 1 of the number to be placed in level 2
+		// sr/c = source row/column
+		const sr = cellPlacementHistory[nextToPlace - 1][0]
+		const sc = cellPlacementHistory[nextToPlace - 1][1]
+
+		console.log(`sr: ${sr}`);
+		console.log(`sc: ${sc}`);
+		console.log(`r: ${r}`);
+		console.log(`c: ${c}`);
+
+		console.log("Checking non-diags");
+		console.log([[sr, 0], [0, sc], [sr, 6], [6, sc]].some(([a, b]) => a === r && b === c));
+		// check validity of placement for non-diagonals
+		if ([[sr, 0], [0, sc], [sr, 6], [6, sc]].some(([a, b]) => a === r && b === c)) {
+			setMatrix((prev) => {
+				prev[r][c] = nextToPlace;
+				return prev;
+			});
+			setNextToPlace((prev) => prev + 1);
+			setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
+			setErrorMsg(null);
+			playSuccess();
+			return;
+		}
+
+		console.log("Checking diags1");
+		console.log([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]].some(([a, b]) => a === sr && b === sc) && [[0, 0], [6, 6]].some(([a, b]) => a === r && b === c));
+		// check validity of placement for diagonals and center
+		if ([[1, 1], [2, 2], [3, 3], [4, 4], [5, 5]].some(([a, b]) => a === sr && b === sc) && [[0, 0], [6, 6]].some(([a, b]) => a === r && b === c)) {
+			setMatrix((prev) => {
+				prev[r][c] = nextToPlace;
+				return prev;
+			});
+			setNextToPlace((prev) => prev + 1);
+			setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
+			setErrorMsg(null);
+			playSuccess();
+			return;
+		}
+
+		console.log("Checking diags2");
+		console.log([[5, 1], [4, 2], [3, 3], [2, 4], [1, 5]].some(([a, b]) => a === sr && b === sc) && [[6, 0], [0, 6]].some(([a, b]) => a === r && b === c))
+		if ([[5, 1], [4, 2], [3, 3], [2, 4], [1, 5]].some(([a, b]) => a === sr && b === sc) && [[6, 0], [0, 6]].some(([a, b]) => a === r && b === c)) {
+			setMatrix((prev) => {
+				prev[r][c] = nextToPlace;
+				return prev;
+			});
+			setNextToPlace((prev) => prev + 1);
+			setCellPlacementHistory([...cellPlacementHistory, [r, c]]);
+			setErrorMsg(null);
+			playSuccess();
+			return;
+		}
+
+		handleError("Invalid placement.");
 	}
 
 	// Define function for undoing a cell placement. Deny undos when next to place is 1.
@@ -229,6 +294,7 @@ const GameBoard = () => {
 		matrix[firstCellPlacement[0]][firstCellPlacement[1]] = 1;
 		setMatrix(matrix);
 		setNextToPlace(2);
+		setActiveLevel(1);
 		setScore(0);
 	}
 

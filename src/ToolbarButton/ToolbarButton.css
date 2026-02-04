@@ -22,6 +22,14 @@
 	background-color: rgb(88, 24, 88);
 }
 
+.lightGreen {
+	background-color: rgb(114, 227, 114);
+}
+
+.lightPurple {
+	background-color: rgb(237, 95, 237);
+}
+
 /* Generic class for toolbar text - positioned to be centered on Button*/
 .toolbarText {
 	display: inline-block;

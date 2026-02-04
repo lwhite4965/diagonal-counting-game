@@ -5,6 +5,8 @@ import { getCellType, playSuccess, playFail } from "./helpers";
 import { useState } from "react";
 import downloadImg from "../assets/downloadImg.svg";
 import uploadImg from "../assets/uploadImg.svg";
+import resetImg from "../assets/resetImg.svg";
+import undoImg from "../assets/undoImg.svg";
 
 // GameBoard instance - renders collection of SingleCells
 const GameBoard = () => {
@@ -392,14 +394,14 @@ const GameBoard = () => {
 				<ToolbarButton
 					label="Undo"
 					onClick={undoCellPlacement}
-					bgColor="green"
-					icon={""}
+					bgColor="lightGreen"
+					icon={undoImg}
 				/>
 				<ToolbarButton
 					label="Clear"
 					onClick={clearBoard}
-					bgColor="purple"
-					icon={""}
+					bgColor="lightPurple"
+					icon={resetImg}
 				/>
 			</div>
 			<p className="helperText">Current Level: {activeLevel}</p>

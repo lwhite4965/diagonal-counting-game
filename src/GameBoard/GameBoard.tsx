@@ -1,13 +1,17 @@
 import "./GameBoard.css";
 import SingleCell from "../SingleCell/SingleCell";
 import ToolbarButton from "../ToolbarButton/ToolbarButton";
-import { getCellType, playSuccess, playFail } from "./helpers";
+import {
+	getCellType,
+	playSuccess,
+	playFail,
+	getRandomInteger
+} from "./helpers";
 import { useState } from "react";
 import downloadImg from "../assets/downloadImg.svg";
 import uploadImg from "../assets/uploadImg.svg";
 import resetImg from "../assets/resetImg.svg";
 import undoImg from "../assets/undoImg.svg";
-
 // GameBoard instance - renders collection of SingleCells
 const GameBoard = () => {
 	// PLACE INTERNAL STATE HERE
@@ -21,15 +25,22 @@ const GameBoard = () => {
 		[-1, 0, 0, 0, 0, 0, -1],
 		[-1, -1, -1, -1, -1, -1, -1]
 	];
+
+	// Place "1" randomly in inner circle
+	const randomX = getRandomInteger(1, 5);
+	const randomY = getRandomInteger(1, 5);
+
+	initialMatrix[randomX][randomY] = 1;
+
 	const [matrix, setMatrix] = useState<number[][]>(initialMatrix);
 
 	// Define State for NextToPlace
-	const [nextToPlace, setNextToPlace] = useState<number>(1);
+	const [nextToPlace, setNextToPlace] = useState<number>(2);
 
 	// Define Internal State for Cell Placement history
 	const [cellPlacementHistory, setCellPlacementHistory] = useState<
-		{number: number, location: number[], pointsEarned: number}[]
-	>([]);
+		{ number: number; location: number[]; pointsEarned: number }[]
+	>([{ number: 1, location: [randomX, randomY], pointsEarned: 1 }]);
 
 	// Define Internal State for which "level" is active
 	const [activeLevel, setActiveLevel] = useState<1 | 2>(1);
@@ -137,7 +148,10 @@ const GameBoard = () => {
 				prev[r][c] = nextToPlace;
 				return prev;
 			});
-			setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: 0}]);
+			setCellPlacementHistory([
+				...cellPlacementHistory,
+				{ number: nextToPlace, location: [r, c], pointsEarned: 0 }
+			]);
 			setNextToPlace((prev) => prev + 1);
 			playSuccess();
 			return;
@@ -145,8 +159,10 @@ const GameBoard = () => {
 
 		// Case where "2" through "25" is being placed
 		// Source coordinates of last placed cell
-		const lr = cellPlacementHistory[cellPlacementHistory.length - 1].location[0];
-		const lc = cellPlacementHistory[cellPlacementHistory.length - 1].location[1];
+		const lr =
+			cellPlacementHistory[cellPlacementHistory.length - 1].location[0];
+		const lc =
+			cellPlacementHistory[cellPlacementHistory.length - 1].location[1];
 		let pointsEarned = 0;
 
 		// Error on selecting non-adjacent cell
@@ -178,7 +194,14 @@ const GameBoard = () => {
 		// Conditionally activate level 2
 		if (nextToPlace == 25) {
 			setActiveLevel(2);
-			setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: pointsEarned}]);
+			setCellPlacementHistory([
+				...cellPlacementHistory,
+				{
+					number: nextToPlace,
+					location: [r, c],
+					pointsEarned: pointsEarned
+				}
+			]);
 			setNextToPlace(2);
 			// Clear "-1" from lvl 2 cells
 			setMatrix((prevMatrix) =>
@@ -188,7 +211,14 @@ const GameBoard = () => {
 			return;
 		}
 
-		setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: pointsEarned}]);
+		setCellPlacementHistory([
+			...cellPlacementHistory,
+			{
+				number: nextToPlace,
+				location: [r, c],
+				pointsEarned: pointsEarned
+			}
+		]);
 		setNextToPlace((prev) => prev + 1);
 		setErrorMsg(null);
 		playSuccess();
@@ -241,7 +271,10 @@ const GameBoard = () => {
 				prev[r][c] = nextToPlace;
 				return prev;
 			});
-			setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: 0}]);
+			setCellPlacementHistory([
+				...cellPlacementHistory,
+				{ number: nextToPlace, location: [r, c], pointsEarned: 0 }
+			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
 			playSuccess();
@@ -281,7 +314,10 @@ const GameBoard = () => {
 				prev[r][c] = nextToPlace;
 				return prev;
 			});
-			setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: 0}]);
+			setCellPlacementHistory([
+				...cellPlacementHistory,
+				{ number: nextToPlace, location: [r, c], pointsEarned: 0 }
+			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
 			playSuccess();
@@ -320,7 +356,10 @@ const GameBoard = () => {
 				prev[r][c] = nextToPlace;
 				return prev;
 			});
-			setCellPlacementHistory([...cellPlacementHistory, {number: nextToPlace, location: [r, c], pointsEarned: 0}]);
+			setCellPlacementHistory([
+				...cellPlacementHistory,
+				{ number: nextToPlace, location: [r, c], pointsEarned: 0 }
+			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
 			playSuccess();
@@ -343,7 +382,9 @@ const GameBoard = () => {
 		const lastCellPlacement = cellPlacementHistory.pop();
 		if (lastCellPlacement) {
 			const newMatrix = [...matrix];
-			newMatrix[lastCellPlacement.location[0]][lastCellPlacement.location[1]] = 0;
+			newMatrix[lastCellPlacement.location[0]][
+				lastCellPlacement.location[1]
+			] = 0;
 			setMatrix(newMatrix);
 			setNextToPlace((prev) => prev - 1);
 
@@ -369,12 +410,15 @@ const GameBoard = () => {
 
 		if (activeLevel == 2) {
 			cellsSaved = 25;
-			newMatrix.forEach((row, i) => {newMatrix[i] = row.map((col) => (col === -1 ? 0 : col))});
+			newMatrix.forEach((row, i) => {
+				newMatrix[i] = row.map((col) => (col === -1 ? 0 : col));
+			});
 		}
-		
+
 		for (let i = 0; i < cellsSaved; i++) {
 			const cellPlacement = cellPlacementHistory[i];
-			newMatrix[cellPlacement.location[0]][cellPlacement.location[1]] = cellPlacement.number;
+			newMatrix[cellPlacement.location[0]][cellPlacement.location[1]] =
+				cellPlacement.number;
 			scoreSaved += cellPlacement.pointsEarned;
 		}
 

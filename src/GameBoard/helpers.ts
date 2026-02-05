@@ -21,6 +21,11 @@ const blueCells = [
 	1, 2, 3, 4, 5, 7, 13, 14, 20, 21, 27, 28, 34, 35, 41, 43, 44, 45, 46, 47
 ];
 
+// Generate random integer in range
+export function getRandomInteger(min: number, max: number): number {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 // Define function that accepts matrix loop # and returns bg color
 export function getCellType(loop: number): "grey" | "blue" | "gold" {
 	if (goldCells.indexOf(loop) != -1) {

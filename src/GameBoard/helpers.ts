@@ -1,9 +1,11 @@
 import successSfx from "../assets/placementSuccess.mp3";
 import failureSfx from "../assets/placementFail.mp3";
+import victorySfx from "../assets/victory.mp3"
 
 // Create audio objects for each sfx
 const successAudio = new Audio(successSfx);
 const failAudio = new Audio(failureSfx);
+const victoryAudio = new Audio(victorySfx);
 
 export function playSuccess() {
 	successAudio.currentTime = 0;
@@ -13,6 +15,11 @@ export function playSuccess() {
 export function playFail() {
 	failAudio.currentTime = 0;
 	failAudio.play();
+}
+
+export function playVictory() {
+	victoryAudio.currentTime = 0;
+	victoryAudio.play();
 }
 
 // Define arrays to hold incides of blue and gold cells

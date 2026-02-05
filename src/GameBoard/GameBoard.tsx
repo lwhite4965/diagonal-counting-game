@@ -5,7 +5,8 @@ import {
 	getCellType,
 	playSuccess,
 	playFail,
-	getRandomInteger
+	getRandomInteger,
+	playVictory
 } from "./helpers";
 import { useState } from "react";
 import downloadImg from "../assets/downloadImg.svg";
@@ -225,7 +226,7 @@ const GameBoard = () => {
 	}
 
 	// Define function for processing a move in lvl2 - accepts row column coordinates positionally
-	function processLvl2Move(r: number, c: number, cellType: string): void {
+	function processLvl2Move(r: number, c: number, cellType: string): void {		
 		// error on trying to place in previous level
 		if (cellType == "grey") {
 			handleError("Cannot place in level 1.");
@@ -242,21 +243,6 @@ const GameBoard = () => {
 		// sr/c = source row/column
 		const sr = cellPlacementHistory[nextToPlace - 1].location[0];
 		const sc = cellPlacementHistory[nextToPlace - 1].location[1];
-
-		// console.log(`sr: ${sr}`);
-		// console.log(`sc: ${sc}`);
-		// console.log(`r: ${r}`);
-		// console.log(`c: ${c}`);
-
-		// console.log("Checking non-diags");
-		// console.log(
-		// 	[
-		// 		[sr, 0],
-		// 		[0, sc],
-		// 		[sr, 6],
-		// 		[6, sc]
-		// 	].some(([a, b]) => a === r && b === c)
-		// );
 
 		// check validity of placement for non-diagonals
 		if (
@@ -277,24 +263,13 @@ const GameBoard = () => {
 			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
-			playSuccess();
+			if (nextToPlace == 25) {
+				playVictory();
+			} else {
+				playSuccess();
+			}
 			return;
 		}
-
-		// console.log("Checking diags1");
-		// console.log(
-		// 	[
-		// 		[1, 1],
-		// 		[2, 2],
-		// 		[3, 3],
-		// 		[4, 4],
-		// 		[5, 5]
-		// 	].some(([a, b]) => a === sr && b === sc) &&
-		// 		[
-		// 			[0, 0],
-		// 			[6, 6]
-		// 		].some(([a, b]) => a === r && b === c)
-		// );
 
 		// check validity of placement for diagonals and center
 		if (
@@ -320,24 +295,13 @@ const GameBoard = () => {
 			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
-			playSuccess();
+			if (nextToPlace == 25) {
+				playVictory();
+			} else {
+				playSuccess();
+			}
 			return;
 		}
-
-		// console.log("Checking diags2");
-		// console.log(
-		// 	[
-		// 		[5, 1],
-		// 		[4, 2],
-		// 		[3, 3],
-		// 		[2, 4],
-		// 		[1, 5]
-		// 	].some(([a, b]) => a === sr && b === sc) &&
-		// 		[
-		// 			[6, 0],
-		// 			[0, 6]
-		// 		].some(([a, b]) => a === r && b === c)
-		// );
 
 		if (
 			[
@@ -362,10 +326,15 @@ const GameBoard = () => {
 			]);
 			setNextToPlace((prev) => prev + 1);
 			setErrorMsg(null);
-			playSuccess();
+			if (nextToPlace == 25) {
+				playVictory();
+			} else {
+				playSuccess();
+			}
 			return;
 		}
 
+		// handle incorrect placements
 		handleError("Lvl 2 placements must relate to lvl 1 placements.");
 	}
 

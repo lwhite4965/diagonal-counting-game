@@ -14,10 +14,10 @@ import downloadImg from "../assets/downloadImg.svg";
 import uploadImg from "../assets/uploadImg.svg";
 import resetImg from "../assets/resetImg.svg";
 import undoImg from "../assets/undoImg.svg";
+
 // GameBoard instance - renders collection of SingleCells
 const GameBoard = () => {
-	// PLACE INTERNAL STATE HERE
-	// Define Initial Matrix State
+	// Logic for placing a random 1 per website refresh
 	const initialMatrix = [
 		[-1, -1, -1, -1, -1, -1, -1],
 		[-1, 0, 0, 0, 0, 0, -1],
@@ -28,33 +28,35 @@ const GameBoard = () => {
 		[-1, -1, -1, -1, -1, -1, -1]
 	];
 
-	// Place "1" randomly in inner circle in DEEP COPY TO AVOID DUPLICATE 1 PLACEMENT
+	// USE DEEP COPY TO AVOID DUPLICATE 1 PLACEMENTS
 	const randomX = getRandomInteger(1, 5);
 	const randomY = getRandomInteger(1, 5);
 
 	const tempCopy = deepCopyMatrix(initialMatrix);
 	tempCopy[randomX][randomY] = 1;
 
+	// PLACE INTERNAL STATE HERE
+	// 2D array where each cell corresponds to a SingleCell
 	const [matrix, setMatrix] = useState<number[][]>(tempCopy);
 
-	// Define State for NextToPlace
+	// Internally tracks the next number to be placed - starts at 2 since 1 is autoplaced
 	const [nextToPlace, setNextToPlace] = useState<number>(2);
 
-	// Define Internal State for Cell Placement history
+	// Track stack of moves to for implementing undo feature
 	const [cellPlacementHistory, setCellPlacementHistory] = useState<
 		{ number: number; location: number[]; pointsEarned: number }[]
 	>([{ number: 1, location: [randomX, randomY], pointsEarned: 1 }]);
 
-	// Define Internal State for which "level" is active
+	// Which "level" is active - used for handling input logic and rendering outer layer
 	const [activeLevel, setActiveLevel] = useState<1 | 2>(1);
 
-	// Define Internal State for Current Score
+	// Current score
 	const [score, setScore] = useState<number>(0);
 
-	// Define Internal State for Error Messaging
+	// Currently displayed error message - reset to null after each successful placement
 	const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-	//Define Internal State for Player Name
+	// Players name - used for logging games
 	const [playerName, setPlayerName] = useState<string>("");
 
 	// PLACE METHODS HERE
@@ -471,7 +473,7 @@ const GameBoard = () => {
 				</label>
 				<input
 					id="playerName"
-					className='playerNameInput'
+					className="playerNameInput"
 					type="text"
 					placeholder="Enter your name"
 					value={playerName}
@@ -545,15 +547,6 @@ const GameBoard = () => {
 					</p>
 				</div>
 			</div>
-
-			{/*
-			<p className="helperText">
-				{`Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length - 1]}`}
-			</p>
-			<p className="helperText">
-				{`2nd Last Cell (debugging): ${cellPlacementHistory[cellPlacementHistory.length - 2]}`}
-			</p>
-			 */}
 			<p
 				className={`errorText ${errorMsg ? "" : "hidden"}`}>{`Error: ${errorMsg}`}</p>
 		</div>

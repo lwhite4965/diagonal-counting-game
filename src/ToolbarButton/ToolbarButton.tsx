@@ -1,6 +1,6 @@
 import "./ToolbarButton.css";
 
-// Define Interaface for ToolbarButtonProps
+// Define Interface for ToolbarButtonProps
 // Note - Icon is optional, name and onClick callback are not
 interface ToolbarButtonProps {
 	icon?: string;
@@ -9,6 +9,7 @@ interface ToolbarButtonProps {
 	onClick: () => void;
 }
 
+// Modular component for adding general functionality to the GameBoard toolbar
 const ToolbarButton = (props: ToolbarButtonProps) => {
 	return (
 		<button

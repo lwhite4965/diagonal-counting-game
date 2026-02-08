@@ -50,3 +50,26 @@
 .hidden {
 	visibility: hidden;
 }
+
+/* US7: Player Name Input Styles */
+.playerNameLabel {
+	color: black;
+	font-size: 22px;
+	text-shadow: 1px 1px 1px rgb(251, 251, 150);
+	display: flex;
+	align-items: center;
+}
+
+.playerNameInput {
+	padding: 8px 12px;
+	border-radius: 8px;
+	border: 2px solid rgb(227, 185, 14);
+	background: rgba(255, 255, 255, 0.85);
+	color: black;
+	font-size: 18px;
+	width: 220px;
+}
+
+.playerNameInput::placeholder {
+	color: rgba(0, 0, 0, 0.4);
+}

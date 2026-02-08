@@ -543,7 +543,8 @@ const GameBoard = () => {
 					<p className="helperText">Current Level: {activeLevel}</p>
 					<p className="helperText">Current Score is: {score}</p>
 					<p className="helperText">
-						Next Number to Place is: {nextToPlace}
+						Next Number to Place is:{" "}
+						{nextToPlace == 26 ? "You Win!" : nextToPlace}
 					</p>
 				</div>
 			</div>

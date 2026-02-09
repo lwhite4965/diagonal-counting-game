@@ -45,7 +45,7 @@ const GameBoard = () => {
 	// Track stack of moves to for implementing undo feature
 	const [cellPlacementHistory, setCellPlacementHistory] = useState<
 		{ number: number; location: number[]; pointsEarned: number }[]
-	>([{ number: 1, location: [randomX, randomY], pointsEarned: 1 }]);
+	>([{ number: 1, location: [randomX, randomY], pointsEarned: 0 }]);
 
 	// Which "level" is active - used for handling input logic and rendering outer layer
 	const [activeLevel, setActiveLevel] = useState<1 | 2>(1);

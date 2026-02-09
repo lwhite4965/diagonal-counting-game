@@ -2,6 +2,10 @@
 
 Diagonal Counting Game - Group 2
 
+## OS
+
+The Operating System used to develop and test the web app varies between Windows and Mac between the members.
+
 ## Techstack
 
 For now, the entire app is built in React (TypeScript) and styled with vanilla CSS.
